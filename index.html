@@ -61,6 +61,8 @@
         justify-content: center;
         align-items: center;
         z-index: 0; /* Behind React app when mounted */
+        padding: 20px;
+        text-align: center;
       }
       .loader {
         width: 48px;
@@ -78,6 +80,8 @@
         font-weight: 500;
         letter-spacing: 0.1em;
         animation: pulse 2s infinite;
+        max-width: 400px;
+        line-height: 1.5;
       }
       @keyframes rotation {
         0% { transform: rotate(0deg); }
@@ -108,9 +112,35 @@
     <div id="root">
         <div class="loader-container">
             <span class="loader"></span>
-            <span class="loading-text">Loading StarterKart...</span>
+            <span class="loading-text" id="loading-msg">Loading StarterKart...</span>
         </div>
     </div>
+    
+    <script>
+      // Global error handler to catch script loading failures (common on GitHub Pages without build)
+      window.addEventListener('error', function(event) {
+         const msg = document.getElementById('loading-msg');
+         if (msg) {
+             msg.style.color = '#ff8fa3';
+             msg.style.animation = 'none';
+             // Check if it looks like a syntax error (JSX)
+             if (event.message && (event.message.includes('Syntax') || event.message.includes('token'))) {
+                 msg.innerHTML = "Error: Browser cannot run .tsx files directly.<br/><br/>You are viewing the source code. Please run <code>npm run build</code> and deploy the dist folder.";
+             } else {
+                 msg.innerHTML = "Something went wrong while loading the app.<br/><br/>" + event.message;
+             }
+         }
+      });
+      
+      // Fallback if it just hangs
+      setTimeout(function() {
+          const msg = document.getElementById('loading-msg');
+          if (msg && msg.innerText.includes('Loading')) {
+               msg.innerHTML = "Taking longer than expected...<br/><br/>If you are on GitHub Pages, make sure you deployed the built version (npm run build), not the source code.";
+          }
+      }, 4000);
+    </script>
+    
     <script type="module" src="./index.tsx"></script>
   </body>
 </html>
